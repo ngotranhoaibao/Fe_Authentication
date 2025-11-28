@@ -31,7 +31,7 @@ export const AuthContextProvider = ({ children }) => {
 
  const registerUser = async (payload) => {
   try {
-    const res = await register(payload);
+    const res = await register(payload); 
     const data = res.data;
 
     localStorage.setItem("userInfo", JSON.stringify(data));
@@ -43,10 +43,15 @@ export const AuthContextProvider = ({ children }) => {
 
     return updated; 
   } catch (error) {
-    console.error("Register error:", error.response?.data || error);
-    throw error;
+    if (error.response?.data?.errorCode?.length) {
+      error.response.data.errorCode.forEach((e) => toast.error(e.message));
+    } else {
+      toast.error(error.response?.data?.message || "Register failed");
+    }
+    throw error; 
   }
 };
+
 
 
   const logout = () => {

@@ -17,16 +17,16 @@ const SignupPage = () => {
   setLoading(true);
 
   try {
-    const data = await registerUser({ name, email, password }); 
+    await registerUser({ name, email, password });
     toast.success("Đăng ký thành công!");
     navigate("/");
   } catch (error) {
-    console.error(error);
-    toast.error(error.response?.data?.message || "Register failed");
+    console.error("Register failed:", error.response?.data || error);
   } finally {
     setLoading(false);
   }
 };
+
 
 
   return (
