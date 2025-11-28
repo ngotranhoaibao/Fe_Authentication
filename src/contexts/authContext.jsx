@@ -29,24 +29,25 @@ export const AuthContextProvider = ({ children }) => {
     }
   };
 
-  const registerUser = async (payload) => {
-    try {
-      const res = await register(payload);
-      const data = res.data; 
-      localStorage.setItem("userInfo", JSON.stringify(data));
+ const registerUser = async (payload) => {
+  try {
+    const res = await register(payload);
+    const data = res.data;
 
-      const meRes = await getMe();
-      const updated = { ...data, user: meRes.data };
-      setUserInfo(updated);
-      localStorage.setItem("userInfo", JSON.stringify(updated));
+    localStorage.setItem("userInfo", JSON.stringify(data));
 
-      toast.success("Đăng ký thành công!");
-      navigate("/");
-    } catch (error) {
-      console.error("Register error:", error.response?.data || error);
-      toast.error(error.response?.data?.message || "Register failed");
-    }
-  };
+    const meRes = await getMe();
+    const updated = { ...data, user: meRes.data };
+    setUserInfo(updated);
+    localStorage.setItem("userInfo", JSON.stringify(updated));
+
+    return updated; 
+  } catch (error) {
+    console.error("Register error:", error.response?.data || error);
+    throw error;
+  }
+};
+
 
   const logout = () => {
     setUserInfo(null);

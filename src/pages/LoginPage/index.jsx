@@ -34,6 +34,7 @@ const LoginPage = () => {
             setEmail={setEmail}
             password={password}
             setPassword={setPassword}
+            loading={loading}
           />
         </div>
       </div>

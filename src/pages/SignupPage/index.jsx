@@ -12,21 +12,22 @@ const SignupPage = () => {
 
   const navigate = useNavigate();
 
-  const handleRegister = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+ const handleRegister = async (e) => {
+  e.preventDefault();
+  setLoading(true);
 
-    try {
-      await registerUser({ name,email, password });
-
-      toast.success("Đăng ký thành công!");
-      navigate("/");
-    } catch (error) {
-      console.error(error);
-      toast.error(error.response?.data?.message || "Register failed");
-    }
+  try {
+    const data = await registerUser({ name, email, password }); 
+    toast.success("Đăng ký thành công!");
+    navigate("/");
+  } catch (error) {
+    console.error(error);
+    toast.error(error.response?.data?.message || "Register failed");
+  } finally {
     setLoading(false);
-  };
+  }
+};
+
 
   return (
     <div className="h-screen flex items-center justify-center">
