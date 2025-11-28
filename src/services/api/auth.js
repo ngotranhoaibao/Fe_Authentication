@@ -1,12 +1,16 @@
 import api from "@/services/api/index.js";
+
 export const loginUser = async (payload) => {
-    return await api.post("/auth/login", payload);
+  const res = await api.post("/auth/login", payload);
+  return res.data; 
 };
 
 export const register = async (payload) => {
-    return await api.post("/auth/register", payload);
+  const res = await api.post("/auth/register", payload);
+  return res.data;
 };
 
 export const getMe = async () => {
-    return await api.get("/auth/me");
-}
+  const res = await api.get("/auth/me");
+  return res.data; 
+};

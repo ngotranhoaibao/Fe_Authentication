@@ -1,5 +1,5 @@
-import React, { useState, createContext } from "react";
-import { loginUser, getMe, register } from "@/services/api/auth.js";
+import { createContext, useState } from "react";
+import { loginUser, register, getMe } from "@/services/api/auth.js";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
@@ -13,57 +13,54 @@ export const AuthContextProvider = ({ children }) => {
 
   const loginContext = async (email, password) => {
     try {
+      // 1. Login
       const res = await loginUser({ email, password });
-      if (res.status === 200) {
-        setUserInfo(res.data);
-        localStorage.setItem("userInfo", JSON.stringify(res.data));
-        navigate("/");
-      }
-      try {
-        const me = await getMe();
-        if (me.status === 200) {
-          const old = JSON.parse(localStorage.getItem("userInfo")) || {};
-          const updated = { ...old, user: me.data?.user || me.data };
-          localStorage.setItem("userInfo", JSON.stringify(updated));
-          setUserInfo(updated);
-          toast.success("Đăng nhập thành công!");
-        } else {
-          toast.error("Không thể lấy thông tin người dùng!");
-        }
-      } catch (err) {
-        console.error("Lỗi getMe:", err);
-        toast.error("Không thể lấy thông tin người dùng!");
-      }
+      const data = res.data; // BE trả {user, token}
+
+      // 2. Lưu vào localStorage
+      localStorage.setItem("userInfo", JSON.stringify(data));
+
+      // 3. Lấy thông tin đầy đủ từ /auth/me
+      const meRes = await getMe();
+      const updated = { ...data, user: meRes.data }; 
+      setUserInfo(updated);
+      localStorage.setItem("userInfo", JSON.stringify(updated));
+
+      toast.success("Đăng nhập thành công!");
+      navigate("/");
     } catch (error) {
-      console.error(error);
+      console.error("Login error:", error.response?.data || error);
       toast.error(error.response?.data?.message || "Login failed");
     }
-  };
-
-  const logout = async () => {
-    try {
-      await logoutUser();
-    } catch {}
-    setUserInfo(null);
-    localStorage.removeItem("userInfo");
-    navigate("/sign-in", { replace: true });
   };
 
   const registerUser = async (payload) => {
     try {
       const res = await register(payload);
-      if (res.status === 200) {
-        setUserInfo(res.data);
-        localStorage.setItem("userInfo", JSON.stringify(res.data));
-        navigate("/");
-      }
+      const data = res.data; // {user, token}
+      localStorage.setItem("userInfo", JSON.stringify(data));
+
+      const meRes = await getMe();
+      const updated = { ...data, user: meRes.data };
+      setUserInfo(updated);
+      localStorage.setItem("userInfo", JSON.stringify(updated));
+
+      toast.success("Đăng ký thành công!");
+      navigate("/");
     } catch (error) {
-      console.error(error);
+      console.error("Register error:", error.response?.data || error);
+      toast.error(error.response?.data?.message || "Register failed");
     }
   };
 
+  const logout = () => {
+    setUserInfo(null);
+    localStorage.removeItem("userInfo");
+    navigate("/sign-in", { replace: true });
+  };
+
   return (
-    <AuthContext.Provider value={{ userInfo, loginContext, logout, registerUser }}>
+    <AuthContext.Provider value={{ userInfo, loginContext, registerUser, logout }}>
       {children}
     </AuthContext.Provider>
   );

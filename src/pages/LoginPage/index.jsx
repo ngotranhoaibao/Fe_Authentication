@@ -8,19 +8,22 @@ const LoginPage = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const [loading, setLoading] = useState(false);
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
+
     try {
+      console.log("Payload login gửi:", { email, password }); // log payload
       await loginContext(email, password);
     } catch (error) {
-      console.error(error);
+      console.error("LoginPage error:", error.response?.data || error);
       toast.error(error.response?.data?.message || "Login failed");
     } finally {
       setLoading(false);
     }
   };
+
   return (
     <div className="h-screen flex items-center justify-center">
       <div className="relative w-full h-full bg-[lightgray]">

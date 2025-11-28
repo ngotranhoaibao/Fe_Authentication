@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 const SignupPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [username, setUsername] = useState("");
+  const [name, setName] = useState("");
   const { registerUser } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
 
@@ -17,7 +17,7 @@ const SignupPage = () => {
     setLoading(true);
 
     try {
-      await registerUser({ email, password, username });
+      await registerUser({ name,email, password });
 
       toast.success("Đăng ký thành công!");
       navigate("/");
@@ -38,8 +38,8 @@ const SignupPage = () => {
             setEmail={setEmail}
             password={password}
             setPassword={setPassword}
-            username={username}
-            setUsername={setUsername}
+            name={name}
+            setName={setName}
             loading={loading}
           />
         </div>

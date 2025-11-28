@@ -17,8 +17,8 @@ const SignupCard = ({
   setEmail,
   password,
   setPassword,
-  username,
-  setUsername,
+  name,
+  setName,
   loading = false,
 }) => {
   return (
@@ -31,9 +31,9 @@ const SignupCard = ({
             type="text"
             placeholder="Enter your name"
             className="h-9 w-full bg-transparent border border-input"
-            value={username}
+            value={name}
             disabled={loading}
-            onChange={(e) => setUsername(e.target.value)}
+            onChange={(e) => setName(e.target.value)}
             autoComplete="name"
           />
           <Label htmlFor="email" className="block text-left">Email</Label>
