@@ -3,31 +3,33 @@ import SignupCard from "../../components/SignupCard";
 import AuthContext from "@/contexts/authContext";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+
 const SignupPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [role, setRole] = useState("user");
+
   const { registerUser } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
- const handleRegister = async (e) => {
-  e.preventDefault();
-  setLoading(true);
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    setLoading(true);
 
-  try {
-    await registerUser({ name, email, password });
-    toast.success("Đăng ký thành công!");
-    navigate("/");
-  } catch (error) {
-    console.error("Register failed:", error.response?.data || error);
-  } finally {
-    setLoading(false);
-  }
-};
-
-
+    try {
+      await registerUser({ name, email, password, role });
+      toast.success("Đăng ký thành công!");
+      navigate("/");
+    } catch (error) {
+      console.error("Register failed:", error.response?.data || error);
+      toast.error(error.response?.data?.message || "Đăng ký thất bại");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="h-screen flex items-center justify-center">
@@ -41,6 +43,8 @@ const SignupPage = () => {
             setPassword={setPassword}
             name={name}
             setName={setName}
+            role={role}
+            setRole={setRole}
             loading={loading}
           />
         </div>

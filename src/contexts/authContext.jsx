@@ -1,70 +1,106 @@
-import { createContext, useState } from "react";
-import { loginUser, register, getMe } from "@/services/api/auth.js";
+
+import React, { createContext, useState } from "react";
+import { loginUser, register, getMe, logoutUser } from "@/services/api/auth.js";
+import { getAccessToken, removeAuthTokens } from "@/services/api/index.js"; 
+
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext();
 
 export const AuthContextProvider = ({ children }) => {
-  const navigate = useNavigate();
-  const [userInfo, setUserInfo] = useState(
-    JSON.parse(localStorage.getItem("userInfo")) || null
-  );
+    const navigate = useNavigate();
 
-  const loginContext = async (email, password) => {
-    try {
-      const res = await loginUser({ email, password });
-      const data = res.data; 
-      localStorage.setItem("userInfo", JSON.stringify(data));
-      const meRes = await getMe();
-      const updated = { ...data, user: meRes.data }; 
-      setUserInfo(updated);
-      localStorage.setItem("userInfo", JSON.stringify(updated));
+    const [userInfo, setUserInfo] = useState(
+        JSON.parse(localStorage.getItem("userInfo")) || null
+    );
 
-      toast.success("Đăng nhập thành công!");
-      navigate("/");
-    } catch (error) {
-      console.error("Login error:", error.response?.data || error);
-      toast.error(error.response?.data?.message || "Login failed");
-    }
-  };
+    const loginContext = async (email, password) => {
+        try {
+            const loginRes = await loginUser({ email, password });
 
- const registerUser = async (payload) => {
-  try {
-    const res = await register(payload); 
-    const data = res.data;
+            const token = loginRes?.accessToken || loginRes?.data?.accessToken || null;
 
-    localStorage.setItem("userInfo", JSON.stringify(data));
+            if (!token) throw new Error("Missing access token from login API");
 
-    const meRes = await getMe();
-    const updated = { ...data, user: meRes.data };
-    setUserInfo(updated);
-    localStorage.setItem("userInfo", JSON.stringify(updated));
+            localStorage.setItem("accessToken", token); 
 
-    return updated; 
-  } catch (error) {
-    if (error.response?.data?.errorCode?.length) {
-      error.response.data.errorCode.forEach((e) => toast.error(e.message));
-    } else {
-      toast.error(error.response?.data?.message || "Register failed");
-    }
-    throw error; 
-  }
-};
+            const profile = await getMe();
 
+            const finalUserInfo = { user: profile }; 
+            setUserInfo(finalUserInfo);
+            localStorage.setItem("userInfo", JSON.stringify(finalUserInfo));
 
+            toast.success("Đăng nhập thành công");
+            navigate("/", { replace: true });
 
-  const logout = () => {
-    setUserInfo(null);
-    localStorage.removeItem("userInfo");
-    navigate("/sign-in", { replace: true });
-  };
+            return finalUserInfo;
+        } catch (error) {
+            console.error("Login error:", error);
+            toast.error(error?.response?.data?.message || "Login failed");
+            
+            removeAuthTokens(); 
+            setUserInfo(null);
+            throw error;
+        }
+    };
+    
+    const registerUser = async (payload) => {
+        try {
+            const regRes = await register(payload);
 
-  return (
-    <AuthContext.Provider value={{ userInfo, loginContext, registerUser, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
+            const token = regRes?.accessToken || regRes?.data?.accessToken || null;
+
+            if (!token) throw new Error("Missing access token from register API");
+
+            localStorage.setItem("accessToken", token);
+
+            const profile = await getMe();
+
+            const finalUserInfo = { user: profile };
+            setUserInfo(finalUserInfo);
+            localStorage.setItem("userInfo", JSON.stringify(finalUserInfo));
+
+            toast.success("Đăng ký thành công");
+
+            return finalUserInfo;
+        } catch (error) {
+            console.error("Register error:", error);
+            toast.error(error?.response?.data?.message || "Register failed");
+            
+            removeAuthTokens();
+            setUserInfo(null);
+            throw error;
+        }
+    };
+
+    const logout = async () => {
+        try {
+            await logoutUser();
+        } catch (e) {
+            console.warn("failed to logout on server");
+        }
+
+        setUserInfo(null);
+        removeAuthTokens();
+        navigate("/sign-in", { replace: true });
+    };
+
+    return (
+        <AuthContext.Provider
+            value={{
+                userInfo: {
+                    ...userInfo,
+                    isAuthenticated: !!userInfo?.user && !!getAccessToken(),
+                },
+                loginContext,
+                registerUser,
+                logout,
+            }}
+        >
+            {children}
+        </AuthContext.Provider>
+    );
 };
 
 export default AuthContext;

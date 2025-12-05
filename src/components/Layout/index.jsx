@@ -1,14 +1,19 @@
 import React from "react";
 import Header from "../Header";
 import { Outlet } from "react-router-dom";
+import { SidebarProvider } from "../ui/sidebar";
+import  AppSidebar  from "../AppSidebar";
 const Layout = () => {
   return (
-    <div className="">
-      <Header />
-      <main className="grid gap-6 mx-5 max-w-7xl md:mx-auto my-10 mt-20 mb-6 min-h-[60vh]">
-        <Outlet />
-      </main>
-    </div>
+    <SidebarProvider>
+      <AppSidebar/>
+      <div className="flex-1 flex flex-col overflow-hidden">
+
+        <main className="flex-1 overflow-y-auto p-4 lg:p-8">
+          <Outlet />
+        </main>
+      </div>
+    </SidebarProvider>
   );
 };
 

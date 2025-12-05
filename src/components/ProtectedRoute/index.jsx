@@ -5,13 +5,16 @@ import AuthContext from "@/contexts/authContext";
 const ProtectedRoute = ({ children, role }) => {
   const { userInfo } = useContext(AuthContext);
   const location = useLocation();
-  const hasToken = !!userInfo?.accessToken || !!userInfo?.token;
-  if (!userInfo || !hasToken) {
+
+  const isAuthenticated = !!userInfo?.accessToken && !!userInfo?.user;
+
+  if (!isAuthenticated) {
     return <Navigate to="/sign-in" state={{ from: location }} replace />;
   }
-  const currentRole = userInfo?.user?.role ?? userInfo?.role ?? null;
+  const currentRole = userInfo?.user?.role ?? null;
+
   if (role) {
-    const allowed = Array.isArray(role) ? role : String(role).split(/\s+/); 
+    const allowed = Array.isArray(role) ? role : String(role).split(/\s+/);
     if (!allowed.includes(currentRole)) {
       return <Navigate to="/" replace />;
     }

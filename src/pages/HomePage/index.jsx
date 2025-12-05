@@ -21,7 +21,7 @@ const HomePage = () => {
   ];
 
   return (
-    <div className="p-5">
+    <>
       <div className="text-center my-10 md:my-16 lg:my-20">
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
           Welcome to the App
@@ -41,7 +41,7 @@ const HomePage = () => {
           />
         ))}
       </div>
-    </div>
+    </>
   );
 };
 

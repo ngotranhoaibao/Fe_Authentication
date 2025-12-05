@@ -11,6 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 const LoginCard = ({
   handleLogin,
   email,
@@ -20,8 +21,13 @@ const LoginCard = ({
   loading = false,
 }) => {
   return (
-    <Card className="w-full max-w-sm p-8">
-      <CardTitle className="text-2xl font-bold text-center">Login</CardTitle>
+    <Card className="w-full max-w-sm ">
+      <CardTitle className="text-2xl font-bold text-center">
+        Welcome Back
+      </CardTitle>
+      <p className="text-center text-sm text-gray-500">
+        Log in to your project management dashboard
+      </p>
       <CardContent className="flex flex-col items-center justify-center gap-4 w-full max-w-xs mx-auto p-0">
         <form className="w-full space-y-3">
           <Label htmlFor="email" className="">
@@ -48,7 +54,14 @@ const LoginCard = ({
             disabled={loading}
             autoComplete="current-password"
           />
-
+          <div className="flex items-center justify-between">            
+            <div className="flex items-center gap-3">
+              <Checkbox id="terms" />
+              <p className="text-sm text-gray-500">Remember me</p>
+            </div>
+            
+            <a className="text-sm text-primary">Forgot your password?</a>
+          </div>
           <Button
             data-slot="button"
             onClick={handleLogin}
