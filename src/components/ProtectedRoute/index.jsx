@@ -6,7 +6,8 @@ const ProtectedRoute = ({ children, role }) => {
   const { userInfo } = useContext(AuthContext);
   const location = useLocation();
 
-  const isAuthenticated = !!userInfo?.accessToken && !!userInfo?.user;
+const accessToken = localStorage.getItem("accessToken");
+const isAuthenticated = !!accessToken && !!userInfo?.user;
 
   if (!isAuthenticated) {
     return <Navigate to="/sign-in" state={{ from: location }} replace />;

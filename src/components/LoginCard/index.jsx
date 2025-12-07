@@ -54,13 +54,15 @@ const LoginCard = ({
             disabled={loading}
             autoComplete="current-password"
           />
-          <div className="flex items-center justify-between">            
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Checkbox id="terms" />
               <p className="text-sm text-gray-500">Remember me</p>
             </div>
-            
-            <a className="text-sm text-primary">Forgot your password?</a>
+
+            <Link to="/forgot-password" className="text-sm text-primary">
+              Forgot your password?
+            </Link>
           </div>
           <Button
             data-slot="button"

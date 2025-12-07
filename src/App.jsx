@@ -10,20 +10,52 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import DashboardPage from "./pages/DashboardPage";
 import ProfilePage from "./pages/ProfilePage";
 import ProjectsPage from "./pages/ProjectsPage";
+import ForgotPage from "./pages/ForgotPage";
+import ChangPassPage from "./pages/ChangPassPage";
 function App() {
   return (
     <Router>
       <AuthContextProvider>
         <Toaster toastOptions={{ duration: 4000 }} />
         <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route path="dashboard" element={<DashboardPage />} />
-            <Route path="profile" element={<ProfilePage />} />
-            <Route path="projects" element={<ProjectsPage />} />
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <Layout />
+              </ProtectedRoute>
+            }
+          >
+            <Route
+              path="dashboard"
+              element={
+                <ProtectedRoute>
+                  <DashboardPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="profile"
+              element={
+                <ProtectedRoute>
+                  <ProfilePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="projects"
+              element={
+                <ProtectedRoute>
+                  <ProjectsPage />
+                </ProtectedRoute>
+              }
+            />
           </Route>
 
           <Route path="/sign-in" element={<LoginPage />} />
           <Route path="/sign-up" element={<SignupPage />} />
+          <Route path="/reset-password/:token" element={<ChangPassPage />} />
+          <Route path="/forgot-password" element={<ForgotPage />} />
         </Routes>
       </AuthContextProvider>
     </Router>

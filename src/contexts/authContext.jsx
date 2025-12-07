@@ -45,34 +45,38 @@ export const AuthContextProvider = ({ children }) => {
         }
     };
     
-    const registerUser = async (payload) => {
-        try {
-            const regRes = await register(payload);
+   const registerUser = async (payload) => {
+  try {
+    // register() now returns { user, token }
+    const data = await register(payload);
+    // data.token.accessToken expected
+    const accessToken =
+      data?.token?.accessToken ?? data?.accessToken ?? null;
 
-            const token = regRes?.accessToken || regRes?.data?.accessToken || null;
+    if (!accessToken) {
+      console.error("Register: accessToken not found in response", data);
+      throw new Error("Missing access token from register API");
+    }
 
-            if (!token) throw new Error("Missing access token from register API");
+    localStorage.setItem("accessToken", accessToken);
 
-            localStorage.setItem("accessToken", token);
+    const profile = await getMe();
 
-            const profile = await getMe();
+    const finalUserInfo = { user: profile };
+    setUserInfo(finalUserInfo);
+    localStorage.setItem("userInfo", JSON.stringify(finalUserInfo));
 
-            const finalUserInfo = { user: profile };
-            setUserInfo(finalUserInfo);
-            localStorage.setItem("userInfo", JSON.stringify(finalUserInfo));
+    toast.success("Đăng ký thành công");
+    return finalUserInfo;
+  } catch (error) {
+    console.error("Register error:", error);
+    toast.error(error?.response?.data?.message || error.message || "Register failed");
 
-            toast.success("Đăng ký thành công");
-
-            return finalUserInfo;
-        } catch (error) {
-            console.error("Register error:", error);
-            toast.error(error?.response?.data?.message || "Register failed");
-            
-            removeAuthTokens();
-            setUserInfo(null);
-            throw error;
-        }
-    };
+    removeAuthTokens();
+    setUserInfo(null);
+    throw error;
+  }
+};
 
     const logout = async () => {
         try {

@@ -1,7 +1,8 @@
 import api from "@/services/api/index.js";
+
 export const getProjects = async () => {
   const res = await api.get("/project");
-  return res.data.data; 
+  return res.data.data;
 };
 
 export const createProject = async (project) => {

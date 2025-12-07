@@ -1,4 +1,4 @@
-import React, { useState } from "react"; 
+import React, { useState } from "react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -24,7 +24,7 @@ const CreateProjectCard = ({
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); 
+    e.preventDefault();
 
     if (!title || !description) {
       alert("Vui lòng điền đầy đủ Tiêu đề và Mô tả dự án.");
@@ -34,16 +34,16 @@ const CreateProjectCard = ({
     const projectData = {
       title,
       description,
-      status: status || 'not-started', 
+      status: status || "Not Started",
     };
 
     setIsLoading(true);
     try {
       await onCreateProject(projectData);
-    
+
       setTitle("");
       setDescription("");
-      setStatus("not-started"); 
+      setStatus("Not Started");
       alert("Dự án đã được tạo thành công!");
     } catch (error) {
       alert(`Tạo dự án thất bại: ${error.message}`);
@@ -57,16 +57,18 @@ const CreateProjectCard = ({
       <form onSubmit={handleSubmit} className="w-full max-w-6xl">
         <Card className="shadow-md">
           <CardContent className="p-6 space-y-6">
-            
             <div className="space-y-2">
-              <Label htmlFor="project-title" className="font-semibold text-base">
+              <Label
+                htmlFor="project-title"
+                className="font-semibold text-base"
+              >
                 Project Title
               </Label>
               <Input
                 id="project-title"
                 placeholder="Enter a clear and concise project title"
-                value={title} 
-                onChange={(e) => setTitle(e.target.value)} 
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
                 required
               />
             </div>
@@ -81,18 +83,21 @@ const CreateProjectCard = ({
               <Textarea
                 id="project-description"
                 placeholder="Provide a detailed description of the project"
-                value={description} 
-                onChange={(e) => setDescription(e.target.value)} 
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
                 required
               />
             </div>
             <div className="">
-              <Label htmlFor="project-status" className="font-semibold text-base">
+              <Label
+                htmlFor="project-status"
+                className="font-semibold text-base"
+              >
                 Status
               </Label>
               <Select
-                value={status} 
-                onValueChange={(value) => setStatus(value)} 
+                value={status}
+                onValueChange={(value) => setStatus(value)}
               >
                 <SelectTrigger id="project-status" className="w-full">
                   <SelectValue placeholder="Not Started" />
@@ -107,8 +112,8 @@ const CreateProjectCard = ({
           </CardContent>
           <CardFooter className="flex justify-end pt-6 border-t mt-4">
             <div className="flex space-x-3">
-              <Button 
-                type="button" 
+              <Button
+                type="button"
                 variant="outline"
                 onClick={() => {
                   setTitle("");
@@ -121,7 +126,7 @@ const CreateProjectCard = ({
               <Button
                 type="submit"
                 className="bg-blue-600 hover:bg-blue-700 text-white"
-                disabled={isLoading} 
+                disabled={isLoading}
               >
                 {isLoading ? "Creating..." : "Create Project"}
               </Button>
